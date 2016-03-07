@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!--
+I realized that you could check tic-tac-toe games on (0)1 time, so I decided to build a game and test it out.
+-->
+<title>Tic-Tac-Toe</title>
+<style type="text/css">
+a{
+	margin: 3px;
+	padding: 6px 10px;
+	display: inline-block;
+	text-decoration: none;
+	background-color: #3dd;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript">
+var ticTacToe = {
+	dimensions : 3,
+	rows : [],
+	cols : [],
+	leftDiag : null,
+	rightDiag : null,
+	blank : '_',
+	turn : 'X',
+	won : '',
+	createBoard : function(){
+		var output = '';
+		this.turn = 'X';
+		this.won = '';
+		$('#output').html('<p id="turn">X\'s turn</p>');
+		for(var i = 0; i < this.dimensions; i++){
+			this.rows.length = 0;
+			this.cols.length = 0;
+			this.leftDiag = undefined;
+			this.rightDiag = undefined;
+			for(var j = 0; j < this.dimensions; j++)
+				$('<a href="#">' + this.blank + '</a>').data('row', i).data('col', j).appendTo('#output');
+			$('#output').append('<br />');
+		}
+		var _this = this;
+		$('#output>a').click(function(){
+			_this.markCell(this);
+		});
+	},
+	otherTurn : function(){
+		return (this.turn == 'X') ? 'O' : 'X';
+	},
+	onDiag : function(direction, row, col){
+		if(direction == 'left')
+			return row === col;
+		return this.dimensions - 1 - row === col;
+	},
+	markCell : function(obj){
+		if($(obj).text() != this.blank || this.won.length === 1)
+			return false;
+		var row = $(obj).data('row');
+		var col = $(obj).data('col');
+		if(this.rows[row] == undefined)
+			this.rows[row] = {player : this.turn, num : 1};
+		else if(this.rows[row].player != this.turn)
+			this.rows[row].player = '*';
+		else
+			this.rows[row].num++;
+		if(this.cols[col] == undefined)
+			this.cols[col] = {player : this.turn, num : 1};
+		else if(this.cols[col].player != this.turn)
+			this.cols[col].player = '*';
+		else
+			this.cols[col].num++;
+		
+		if(this.onDiag('left', row, col))
+			if(this.leftDiag == undefined)
+				this.leftDiag = {player : this.turn, num : 1};
+			else if(this.leftDiag.player != this.turn)
+				this.leftDiag.player = '*';
+			else
+				this.leftDiag.num++;
+		if(this.onDiag('right', row, col))
+			if(this.rightDiag == undefined)
+				this.rightDiag = {player : this.turn, num : 1};
+			else if(this.rightDiag.player != this.turn)
+				this.rightDiag.player = '*';
+			else
+				this.rightDiag.num++;
+		
+		$(obj).text(this.turn);
+		if(this.wins(row, col))
+			return false;
+		this.turn = this.otherTurn();
+		$('#turn').text(this.turn + '\'s turn');
+	},
+	wins : function(row, col){
+		if(this.rows[row].num === this.dimensions 
+				|| this.cols[col].num === this.dimensions 
+				|| (this.onDiag('left', row, col) && this.leftDiag.num === this.dimensions)
+				|| (this.onDiag('right', row, col) && this.rightDiag.num === this.dimensions)){
+			$('#turn').html('<strong>' + this.turn + ' won!</strong>');
+			this.won = this.turn;
+			return true;
+		}
+		return false;
+	},
+	reset : function(){
+		$('#output').html('');
+	}
+};
+
+$(document).ready(function(){
+	$('#enter').click(function(){
+		ticTacToe.dimensions = parseInt($('#dimensions').val());
+		ticTacToe.createBoard();
+	});
+});
+</script>
+</head>
+<body>
+<h1>Tic-Tac-Toe</h1>
+<h3>Enter dimensions (3 or more)</h3>
+<input type="text" value="3" id="dimensions" />
+<input type="button" value="Enter" id="enter" />
+<br />
+<div id="output"></div>
+</body>
+</html>
