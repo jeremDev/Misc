@@ -32,12 +32,12 @@ var ticTacToe = {
 		var output = '';
 		this.turn = 'X';
 		this.won = '';
+		this.rows.length = 0;
+		this.cols.length = 0;
+		this.leftDiag = undefined;
+		this.rightDiag = undefined;
 		$('#output').html('<p id="turn">X\'s turn</p>');
 		for(var i = 0; i < this.dimensions; i++){
-			this.rows.length = 0;
-			this.cols.length = 0;
-			this.leftDiag = undefined;
-			this.rightDiag = undefined;
 			for(var j = 0; j < this.dimensions; j++)
 				$('<a href="#">' + this.blank + '</a>').data('row', i).data('col', j).appendTo('#output');
 			$('#output').append('<br />');
