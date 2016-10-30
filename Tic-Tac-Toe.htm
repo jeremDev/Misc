@@ -21,6 +21,8 @@ a{
 <script type="text/javascript">
 var ticTacToe = {
 	dimensions : 3,
+	totalCells : 9,
+	marked : 0,
 	rows : [],
 	cols : [],
 	leftDiag : null,
@@ -29,6 +31,9 @@ var ticTacToe = {
 	turn : 'X',
 	won : '',
 	createBoard : function(){
+		this.dimensions = parseInt($('#dimensions').val());
+		this.totalCells = this.dimensions * this.dimensions;
+		this.marked = 0;
 		var output = '';
 		this.turn = 'X';
 		this.won = '';
@@ -88,6 +93,8 @@ var ticTacToe = {
 			else
 				this.rightDiag.num++;
 		
+		this.marked++;
+		
 		$(obj).text(this.turn);
 		if(this.wins(row, col))
 			return false;
@@ -103,6 +110,10 @@ var ticTacToe = {
 			this.won = this.turn;
 			return true;
 		}
+		else if(this.marked === this.totalCells){
+			$('#turn').html('<strong>Draw!</strong>');
+			return true;
+		}
 		return false;
 	},
 	reset : function(){
@@ -112,7 +123,6 @@ var ticTacToe = {
 
 $(document).ready(function(){
 	$('#enter').click(function(){
-		ticTacToe.dimensions = parseInt($('#dimensions').val());
 		ticTacToe.createBoard();
 	});
 });
